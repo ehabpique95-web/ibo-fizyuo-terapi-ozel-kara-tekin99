@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العلاج الطبيعي وإعادة التأهيل</title>
+    <style>
+        :root {
+            --primary-color: #2c7873;
+            --secondary-color: #6fb3b8;
+            --accent-color: #ff9a76;
+            --light-color: #f8f5f1;
+            --dark-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+            direction: rtl;
+        }
+        
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: var(--shadow);
+            min-height: 100vh;
+        }
+        
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .app-header h1 {
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        .main-nav {
+            display: flex;
+            background-color: var(--light-color);
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .nav-btn {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(44, 120, 115, 0.1);
+        }
+        
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .main-content {
+            padding: 2rem;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #235e5a;
+        }
+        
+        .treatment-container, .progress-container, .exercises-grid {
+            background-color: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .progress-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .progress-chart {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .exercise-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .exercise-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .exercise-img {
+            height: 200px;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .exercise-content {
+            padding: 1rem;
+        }
+        
+        .exercise-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .exercise-duration {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .exercise-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .app-footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .progress-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-nav {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>العلاج الطبيعي وإعادة التأهيل</h1>
+            <p>برنامج شامل لحالات العلاج الطبيعي المختلفة</p>
+        </header>
+
+        <nav class="main-nav">
+            <button class="nav-btn active" data-section="patient-info">معلومات المريض</button>
+            <button class="nav-btn" data-section="diagnosis">التشخيص والعلاج</button>
+            <button class="nav-btn" data-section="progress">متابعة التقدم</button>
+            <button class="nav-btn" data-section="exercises">التمارين العلاجية</button>
+        </nav>
+
+        <main class="main-content">
+            <!-- معلومات المريض -->
+            <section id="patient-info" class="content-section active">
+                <h2>معلومات المريض</h2>
+                <form id="patient-form">
+                    <div class="form-group">
+                        <label for="patient-name">اسم المريض:</label>
+                        <input type="text" id="patient-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-age">العمر:</label>
+                        <input type="number" id="patient-age" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-gender">الجنس:</label>
+                        <select id="patient-gender" required>
+                            <option value="">اختر الجنس</option>
+                            <option value="male">ذكر</option>
+                            <option value="female">أنثى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-condition">الحالة الطبية:</label>
+                        <select id="patient-condition" required>
+                            <option value="">اختر الحالة</option>
+                            <optgroup label="إصابات العظام والمفاصل">
+                                <option value="shoulder-injury">إصابات الكتف</option>
+                                <option value="neck-injury">إصابات الرقبة</option>
+                                <option value="knee-injury">إصابات الركبة</option>
+                                <option value="ankle-injury">إصابات الكاحل والقدم</option>
+                                <option value="herniated-disc">الانزلاق الغضروفي</option>
+                            </optgroup>
+                            <optgroup label="إصابات رياضية">
+                                <option value="acl-tear">تمزق الرباط الصليبي الأمامي (ACL)</option>
+                                <option value="meniscus-tear">تمزق الغضروف الهلالي</option>
+                                <option value="tennis-elbow">التهاب مرفق اللاعب (تنس)</option>
+                                <option value="rotator-cuff">إصابات أوتار الكفة المدورة</option>
+                                <option value="hamstring-strain">شد في أوتار الخلفية</option>
+                                <option value="concussion">ارتجاج دماغي</option>
+                                <option value="stress-fracture">كسور الإجهاد</option>
+                            </optgroup>
+                            <optgroup label="حالات عصبية">
+                                <option value="hemiplegia">شلل نصفي</option>
+                                <option value="paraplegia">شلل نصفي سفلي</option>
+                                <option value="multiple-sclerosis">التصلب المتعدد</option>
+                                <option value="parkinson">مرض باركنسون</option>
+                                <option value="stroke">سكتة دماغية</option>
+                            </optgroup>
+                            <optgroup label="ما بعد الجراحة">
+                                <option value="post-surgery">إعادة التأهيل بعد الجراحة</option>
+                                <option value="joint-replacement">ما بعد استبدال المفصل</option>
+                                <option value="spinal-surgery">ما بعد جراحة العمود الفقري</option>
+                            </optgroup>
+                            <optgroup label="أمراض الجهاز التنفسي">
+                                <option value="copd">مرض الانسداد الرئوي المزمن</option>
+                                <option value="asthma">الربو</option>
+                                <option value="pneumonia">ما بعد الالتهاب الرئوي</option>
+                            </optgroup>
+                            <optgroup label="حالات الأطفال">
+                                <option value="cerebral-palsy">الشلل الدماغي</option>
+                                <option value="developmental-delay">التأخر النمائي</option>
+                                <option value="muscular-dystrophy">ضمور العضلات</option>
+                            </optgroup>
+                            <optgroup label="إعادة تأهيل القلب">
+                                <option value="post-heart-surgery">ما بعد جراحة القلب</option>
+                                <option value="heart-failure">فشل القلب</option>
+                            </optgroup>
+                            <optgroup label="حالات روماتيزمية">
+                                <option value="rheumatoid-arthritis">التهاب المفاصل الروماتويدي</option>
+                                <option value="osteoarthritis">التهاب المفاصل التنكسي</option>
+                                <option value="fibromyalgia">الألم العضلي الليفي</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-history">التاريخ الطبي:</label>
+                        <textarea id="patient-history" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">حفظ بيانات المريض</button>
+                </form>
+            </section>
+
+            <!-- التشخيص والعلاج -->
+            <section id="diagnosis" class="content-section">
+                <h2>خطة التشخيص والعلاج</h2>
+                <div id="treatment-plan" class="treatment-container">
+                    <p>يرجى إدخال بيانات المريض أولاً للحصول على خطة علاج مناسبة.</p>
+                </div>
+            </section>
+
+            <!-- متابعة التقدم -->
+            <section id="progress" class="content-section">
+                <h2>متابعة تقدم المريض</h2>
+                <div class="progress-container">
+                    <div class="progress-chart">
+                        <canvas id="progress-chart"></canvas>
+                    </div>
+                    <div class="progress-notes">
+                        <h3>ملاحظات الجلسات</h3>
+                        <div id="session-notes"></div>
+                        <form id="add-note-form">
+                            <div class="form-group">
+                                <label for="session-date">تاريخ الجلسة:</label>
+                                <input type="date" id="session-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="session-note">ملاحظات الجلسة:</label>
+                                <textarea id="session-note" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">إضافة ملاحظة</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- التمارين -->
+            <section id="exercises" class="content-section">
+                <h2>التمارين العلاجية</h2>
+                <div id="exercises-container" class="exercises-grid">
+                    <!-- ستملىء ديناميكياً حسب حالة المريض -->
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>© 2025 تطبيق العلاج الطبيعي وإعادة التأهيل - كل الحقوق محفوظة</p>
+        </footer>
+    </div>
+
+    <!-- نافذة عرض التمرين -->
+    <div id="exercise-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="exercise-details"></div>
+        </div>
+    </div>
+
+    <!-- مكتبة Chart.js من CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // حالة التطبيق
+        const state = {
+            currentPatient: null,
+            sessions: [],
+            exercises: []
+        };
+
+        // عند تحميل الـ DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // أزرار التنقل
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+
+            // نموذج المريض
+            const patientForm = document.getElementById('patient-form');
+            patientForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const patientData = {
+                    name: document.getElementById('patient-name').value,
+                    age: document.getElementById('patient-age').value,
+                    gender: document.getElementById('patient-gender').value,
+                    condition: document.getElementById('patient-condition').value,
+                    history: document.getElementById('patient-history').value
+                };
+                
+                state.currentPatient = patientData;
+                alert('تم حفظ بيانات المريض بنجاح!');
+                
+                updateTreatmentPlan();
+                updateExercises();
+            });
+
+            // نموذج إضافة الملاحظة
+            const noteForm = document.getElementById('add-note-form');
+            noteForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const sessionData = {
+                    date: document.getElementById('session-date').value,
+                    note: document.getElementById('session-note').value
+                };
+                
+                state.sessions.push(sessionData);
+                updateSessionNotes();
+                noteForm.reset();
+            });
+
+            // إغلاق النافذة المنبثقة
+            const modal = document.getElementById('exercise-modal');
+            const closeBtn = document.querySelector('.close');
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // تهيئة الرسم البياني
+            initializeProgressChart();
+        });
+
+        // تحديث خطة العلاج
+        function updateTreatmentPlan() {
+            const treatmentContainer = document.getElementById('treatment-plan');
+            if (!state.currentPatient) return;
+            
+            const condition = state.currentPatient.condition;
+            let treatmentHTML = '';
+            
+            switch(condition) {
+                case 'shoulder-injury':
+                    treatmentHTML = `
+                        <h3>خطة علاج لإصابات الكتف</h3>
+                        <p><strong>التشخيص:</strong> إصابة أوتار الكفة المدورة، أو كتف متجمد، أو خلع كتف</p>
+                        <p><strong>الأهداف:</strong></p>
+                        <ul>
+                            <li>تقليل الألم والالتهاب</li>
+                            <li>زيادة مدى حركة الكتف</li>
+                            <li>تحسين ثبات الكتف</li>
+                            <li>تسهيل العودة للأنشطة اليومية</li>
+                        </ul>
+                        <p><strong>طرق العلاج:</strong></p>
+                        <ul>
+                            <li>العلاج اليدوي وتقنيات التمركز</li>
+                            <li>استخدام شرائط كينيزيو</li>
+                            <li>تطبيقات حرارة/برودة</li>
+                            <li>علاج بالموجات فوق الصوتية وTENS</li>
+                            <li>تمارين تقوية تدريجية</li>
+                            <li>تدريبات الحس العميق (proprioception)</li>
+                        </ul>
+                        <p><strong>فترة التعافي المتوقعة:</strong> 6-12 أسبوع</p>
+                    `;
+                    break;
+                    
+                case 'acl-tear':
+                    treatmentHTML = `
+                        <h3>خطة علاج لتمزق الرباط الصليبي الأمامي (ACL)</h3>
+                        <p><strong>التشخيص:</strong> تمزق كامل أو جزئي للـ ACL</p>
+                        <p><strong>الأهداف:</strong></p>
+                        <ul>
+                            <li>تحسين ثبات الركبة</li>
+                            <li>زيادة قوة العضلات المحيطة</li>
+                            <li>تحسين الحس العميق والتوازن</li>
+                            <li>العودة للأنشطة الرياضية</li>
+                        </ul>
+                        <p><strong>طرق العلاج:</strong></p>
+                        <ul>
+                            <li>تمارين مدى حركة مبكرة</li>
+                            <li>برنامج تقوية تدريجي</li>
+                            <li>تدريب توازن وحس عميق</li>
+                            <li>تمارين بلايوميتركس</li>
+                            <li>تدريب وظيفي للعودة للرياضة</li>
+                            <li>استخدام دعامات عند الحاجة</li>
+                        </ul>
+                        <p><strong>فترة التعافي المتوقعة:</strong> بعد الجراحة 6-9 أشهر</p>
+                    `;
+                    break;
+                    
+                case 'stroke':
+                    treatmentHTML = `
+                        <h3>خطة إعادة تأهيل بعد السكتة الدماغية</h3>
+                        <p><strong>التشخيص:</strong> شلل نصفي/ضعف بعد السكتة</p>
+                        <p><strong>الأهداف:</strong></p>
+                        <ul>
+                            <li>استعادة الوظائف الحركية</li>
+                            <li>تحسين المشي والتوازن</li>
+                            <li>استقلالية الأنشطة اليومية</li>
+                            <li>تحسين النطق والوظائف المعرفية عند الحاجة</li>
+                        </ul>
+                        <p><strong>طرق العلاج:</strong></p>
+                        <ul>
+                            <li>طرق بوباث وتقنيات إعادة التعلم الحركي</li>
+                            <li>تمارين تحفيز الحركة المقيدة</li>
+                            <li>إعادة التأهيل الروبوتي عند الإمكان</li>
+                            <li>تمارين توازن ومشي</li>
+                            <li>العلاج الوظيفي لتدريب ADL</li>
+                            <li>علاج النطق إذا لزم</li>
+                        </ul>
+                        <p><strong>فترة التعافي المتوقعة:</strong> من 6 أشهر إلى سنتين حسب الحالة</p>
+                    `;
+                    break;
+                    
+                default:
+                    treatmentHTML = `
+                        <h3>خطة علاج للحالة: ${state.currentPatient.condition}</h3>
+                        <p>سيتم إعداد خطة علاج مخصصة لهذه الحالة.</p>
+                        <p>يرجى استشارة أخصائي العلاج الطبيعي.</p>
+                    `;
+            }
+            
+            treatmentContainer.innerHTML = treatmentHTML;
+        }
+
+        // تحديث التمارين
+        function updateExercises() {
+            const exercisesContainer = document.getElementById('exercises-container');
+            if (!state.currentPatient) {
+                exercisesContainer.innerHTML = '<p>يرجى إدخال بيانات المريض أولاً</p>';
+                return;
+            }
+            
+            const condition = state.currentPatient.condition;
+            let exercisesHTML = '';
+            
+            switch(condition) {
+                case 'shoulder-injury':
+                    exercisesHTML = `
+                        <div class="exercise-card">
+                            <div class="exercise-img">تمرين تأرجح الكتف</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">تأرجح الكتف (Pendulum)</h3>
+                                <p class="exercise-duration">10-15 تكرار، 2 مجموعات</p>
+                                <button class="exercise-btn" data-exercise="pendulum">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                        <div class="exercise-card">
+                            <div class="exercise-img">المشي بالأصابع على الحائط</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">المشي بالأصابع على الحائط</h3>
+                                <p class="exercise-duration">5-10 تكرار، 2 مجموعات</p>
+                                <button class="exercise-btn" data-exercise="finger-walk">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                        <div class="exercise-card">
+                            <div class="exercise-img">دوران داخلي وخارجي</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">دوران داخلي وخارجي</h3>
+                                <p class="exercise-duration">12-15 تكرار، 3 مجموعات</p>
+                                <button class="exercise-btn" data-exercise="rotation">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'acl-tear':
+                    exercisesHTML = `
+                        <div class="exercise-card">
+                            <div class="exercise-img">تمارين رباعية الرؤوس</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">تمارين تقوية العضلة الرباعية</h3>
+                                <p class="exercise-duration">حمل 10 ثوانٍ، 15 تكرار</p>
+                                <button class="exercise-btn" data-exercise="quad-sets">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                        <div class="exercise-card">
+                            <div class="exercise-img">رفع الساق المستقيمة</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">رفع الساق المستقيمة</h3>
+                                <p class="exercise-duration">10-12 تكرار، 3 مجموعات</p>
+                                <button class="exercise-btn" data-exercise="leg-raises">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                        <div class="exercise-card">
+                            <div class="exercise-img">نصف قرفصاء</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">نصف قرفصاء</h3>
+                                <p class="exercise-duration">8-10 تكرار، 3 مجموعات</p>
+                                <button class="exercise-btn" data-exercise="mini-squat">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                default:
+                    exercisesHTML = `
+                        <div class="exercise-card">
+                            <div class="exercise-img">تمارين عامة</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">تمارين لزيادة مدى الحركة</h3>
+                                <p class="exercise-duration">10-15 تكرار، 2 مجموعات</p>
+                                <button class="exercise-btn" data-exercise="general">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                        <div class="exercise-card">
+                            <div class="exercise-img">تقوية</div>
+                            <div class="exercise-content">
+                                <h3 class="exercise-title">تمارين تقوية أساسية</h3>
+                                <p class="exercise-duration">8-12 تكرار، 3 مجموعات</p>
+                                <button class="exercise-btn" data-exercise="strength">عرض التفاصيل</button>
+                            </div>
+                        </div>
+                    `;
+            }
+            
+            exercisesContainer.innerHTML = exercisesHTML;
+            
+            document.querySelectorAll('.exercise-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const exerciseType = this.getAttribute('data-exercise');
+                    showExerciseDetails(exerciseType);
+                });
+            });
+        }
+
+        // عرض تفاصيل التمرين
+        function showExerciseDetails(exerciseType) {
+            const modal = document.getElementById('exercise-modal');
+            const detailsContainer = document.getElementById('exercise-details');
+            
+            let exerciseDetails = '';
+            
+            switch(exerciseType) {
+                case 'pendulum':
+                    exerciseDetails = `
+                        <h2>تمرين تأرجح الكتف</h2>
+                        <p><strong>الهدف:</strong> زيادة الحركة وتقليل تشنج العضلات</p>
+                        <p><strong>كيفية الأداء:</strong></p>
+                        <ol>
+                            <liاستند بيد واحدة على طاولة أو كرسي ثابت</li>
+                            <li>أرخِ ذراعك المصاب ودعه يتأرجح بشكل خفيف</li>
+                            <li>حرّك الجسم بلطف لتوجيه تأرجح الذراع للأمام والخلف والجانبين وفي دوائر</li>
+                        </ol>
+                        <p><strong>المدة:</strong> 1-2 دقيقة، 3-4 مرات يومياً</p>
+                        <p><strong>ملاحظة مهمة:</strong> لا تتجاوز حدود الألم.</p>
+                    `;
+                    break;
+                    
+                case 'quad-sets':
+                    exerciseDetails = `
+                        <h2>تمارين تقوية العضلة الرباعية</h2>
+                        <p><strong>الهدف:</strong> تقوية العضلات المحيطة بالركبة وتحسين ثباتها</p>
+                        <p><strong>كيفية الأداء:</strong></p>
+                        <ol>
+                            <li>استلقِ على ظهرك مع فرد إحدى الساقين</li>
+                            <li>اشدّ ركبتك نحو الأعلى لتشدّ عضلة الفخذ</li>
+                            <li>اضغط على مؤخرة الركبة نحو الأرض</li>
+                            <li>حافظ على الوضع 5-10 ثوانٍ ثم استرح</li>
+                        </ol>
+                        <p><strong>المدة:</strong> 10-15 تكرار، 3-4 مجموعات يومياً</p>
+                        <p><strong>ملاحظة:</strong> تنفس بشكل طبيعي أثناء التمرين.</p>
+                    `;
+                    break;
+                    
+                default:
+                    exerciseDetails = `
+                        <h2>تمارين عامة</h2>
+                        <p>هذه التمارين قد تم وضعها لتناسب احتياجاتك وفقاً لتوجيهات الأخصائي.</p>
+                        <p>لا تتردد في الاستشارة الطبية إذا كان هناك ألم زائد.</p>
+                    `;
+            }
+            
+            detailsContainer.innerHTML = exerciseDetails;
+            modal.style.display = 'flex';
+        }
+
+        // تحديث ملاحظات الجلسات
+        function updateSessionNotes() {
+            const sessionNotesContainer = document.getElementById('session-notes');
+            let notesHTML = '';
+            
+            state.sessions.forEach(session => {
+                notesHTML += `
+                    <div class="session-note">
+                        <p><strong>التاريخ:</strong> ${session.date}</p>
+                        <p>${session.note}</p>
+                        <hr>
+                    </div>
+                `;
+            });
+            
+            sessionNotesContainer.innerHTML = notesHTML;
+        }
+
+        // تهيئة الرسم البياني
+        function initializeProgressChart() {
+            const ctx = document.getElementById('progress-chart').getContext('2d');
+            
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4', 'الأسبوع 5', 'الأسبوع 6'],
+                    datasets: [{
+                        label: 'مقياس الألم (1-10)',
+                        data: [8, 7, 6, 5, 4, 3],
+                        borderColor: '#ff9a76',
+                        backgroundColor: 'rgba(255, 154, 118, 0.1)',
+                        tension: 0.3
+                    }, {
+                        label: 'المستوى الوظيفي (1-10)',
+                        data: [3, 4, 5, 6, 7, 8],
+                        borderColor: '#2c7873',
+                        backgroundColor: 'rgba(44, 120, 115, 0.1)',
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
